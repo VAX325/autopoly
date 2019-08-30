@@ -1,7 +1,8 @@
 import pyautogui
 import keyboard
 import winsound
-import os
+import pytesseract
+from PIL import Image
 
 images = {
     "buy" : "images/buy.png",
@@ -15,7 +16,11 @@ images = {
     "pay" : "images/pay.png",
     "decline" : "images/decline.png",
     "surrender" : "images/surrender.png",
-    "sell" : "images/sell.png"
+    "sell" : "images/sell.png",
+    "exit" : "images/exit.png",
+    "create" : "images/create.png",
+    "two" : "images/two.png",
+    "createroom" : "images/createroom.png"
 }
 
 brands = [
@@ -43,10 +48,14 @@ brands = [
 ]
 
 
+def find(image):
+    return pyautogui.locateOnScreen(images[image], confidence=.8)
+
+
 def click(ptr, duration=.5):
     if ptr is not None:
         center = pyautogui.center(ptr)
-        pyautogui.moveTo(center[0], center[1], duration=.5)
+        pyautogui.moveTo(center[0], center[1], duration=0)
         pyautogui.leftClick()
 
 
@@ -61,34 +70,40 @@ def trytosell():
     return False
 
 
+def find_click(image):
+    ptr = find(image)
+    click(ptr)
+
+
+def lobby():
+    find_click('create')
+    find_click('two')
+    find_click('createroom')
+
+
 def bot():
     global images
-    counter = 0
     prisontick = False
-    ptr = pyautogui.locateOnScreen(images['decline'], confidence=.7)
-    click(ptr)
-    ptr = pyautogui.locateOnScreen(images['deny'], confidence=.7)
-    click(ptr)
-    ptr = pyautogui.locateOnScreen(images['drop'], confidence=.7)
-    click(ptr)
-    ptr = pyautogui.locateOnScreen(images['buy'], confidence=.7)
-    click(ptr)
-    ptr = pyautogui.locateOnScreen(images['pay'], confidence=.7)
+    find_click('exit')
+    find_click('decline')
+    find_click('deny')
+    find_click('drop')
+    find_click('buy')
+    ptr = find('pay')
     if ptr is not None:
         counter = 0
     click(ptr)
-    ptr = pyautogui.locateOnScreen(images['surrender'], confidence=.7)
-    click(ptr)
-    ptr = pyautogui.locateOnScreen(images['cantprison'], confidence=.7)
+    find_click('surrender')
+    ptr = find('cantprison')
     if ptr is not None:
         prisontick = True
-        ptr = pyautogui.locateOnScreen(images['dropcube'], confidence=.7)
+        ptr = find('dropcube')
         click(ptr)
-    ptr = pyautogui.locateOnScreen(images['cantbuy1'], confidence=.7)
+    ptr = find('cantbuy1')
     if ptr is not None:
-        ptr = pyautogui.locateOnScreen(images['cantbuy2'], confidence=.7)
+        ptr = find('cantbuy2')
         click(ptr)
-    ptr = pyautogui.locateOnScreen(images['cantpay'], confidence=.7)
+    ptr = find('cantpay')
     if ptr is not None and not prisontick:
         winsound.Beep(3000, 1000)
 
@@ -97,7 +112,11 @@ def main():
     while True:
         if keyboard.is_pressed(';'):
             break
-        bot()
+        ptr = find('create')
+        if ptr is not None:
+            lobby()
+        else:
+            bot()
 
 
 main()
