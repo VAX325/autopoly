@@ -17,7 +17,7 @@ images = {
     "decline" : "images/decline.png",
     "surrender" : "images/surrender.png",
     "sell" : "images/sell.png",
-    "exit" : "images/exit.png",
+    #"exit" : "images/exit.png",
     "create" : "images/create.png",
     "two" : "images/two.png",
     "createroom" : "images/createroom.png"
@@ -84,7 +84,7 @@ def lobby():
 def bot():
     global images
     prisontick = False
-    find_click('exit')
+    #find_click('exit')
     find_click('decline')
     find_click('deny')
     find_click('drop')
